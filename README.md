@@ -60,88 +60,56 @@ import socket
 
 s = socket.socket()
 
-host = input("Enter hostname or host IP : ")
+s.connect(('localhost', 8000))
 
-port = 8080
-
-s.connect((host, port))
-
-print("Connected to chat server")
+print("Connected to server")
 
 while True:
 
-    
-    incoming_message = s.recv(1024)
+    message = s.recv(1024).decode()
 
-    
-    incoming_message = incoming_message.decode()
+    print("Server:", message)
 
-    print("Server :", incoming_message)
-    print()
-
-    
-    message = input(">> ")
-
-    
-    message = message.encode()
-
-    s.send(message)
-
-    print("Sent")
-    print()
+    s.send("Acknowledgement Received".encode())
 ```
 # Server:
 ```
 import socket
 
-
 s = socket.socket()
 
+s.bind(('localhost', 8000))
 
-host = "127.0.0.1"
+# Listen for client
+s.listen(5)
 
-print("Server will start on host :", host)
-
-
-port = 8080
-
-s.bind((host, port))
-
-print()
 print("Waiting for connection...")
-print()
 
-s.listen(1)
+# Accept connection
+c, addr = s.accept()
 
-conn, addr = s.accept()
-
-print(addr, "Has connected to the server")
-print()
+print("Connected to:", addr)
 
 while True:
 
-    
-    message = input(">> ")
+    # Input data
+    i = input("Enter a data: ")
 
-    
-    message = message.encode()
+    # Send data
+    c.send(i.encode())
 
-    conn.send(message)
+    # Receive acknowledgement
+    ack = c.recv(1024).decode()
 
-    print("Sent")
-    print()
+    if ack:
+        print(ack)
 
-    
-    incoming_message = conn.recv(1024)
-
-    
-    incoming_message = incoming_message.decode()
-
-    print("Client :", incoming_message)
-    print()
+    else:
+        c.close()
+        break
 ```
 ## Output:
-<img width="1920" height="1020" alt="Screenshot 2026-05-12 142544" src="https://github.com/user-attachments/assets/1cf6772a-4f2c-440b-97a8-d0eb23e598ad" />
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/8f676a45-7070-48cc-a2e2-51fbf6229b43" />
 
 
 
